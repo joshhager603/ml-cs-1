@@ -44,12 +44,15 @@ def lr():
     return clf.score(X_test, y_test)
 
 def svm():
-    tpath = 'test_mod.csv'
+
+    # REMOVE
+    tpath = './DELETE/test_mod.csv'
     tdata = pd.read_csv(tpath).to_numpy()
     tX = tdata[:,0:-1]
     ty = tdata[:,-1]
     tx_scaler = preprocessing.StandardScaler().fit(tX)
     tX = tx_scaler.transform(tX)
+    # -------------------------------
 
     C_params = [i for i in range(1, 50)]
     gamma_params = ['auto', 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
@@ -59,7 +62,9 @@ def svm():
     clf.fit(X_train, y_train)
     print(clf.best_estimator_)
 
+    # REMOVE
     print('Test accuracy: ' + str(clf.score(tX, ty)))
+    # ------------
 
     return clf.score(X_test, y_test)
 
