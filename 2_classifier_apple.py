@@ -43,7 +43,7 @@ def lr():
     clf = LogisticRegression(random_state=0).fit(X_train, y_train)
     return clf.score(X_test, y_test)
 
-def svm():
+def svm_tune():
 
     # REMOVE
     tpath = './DELETE/test_mod.csv'
@@ -66,13 +66,57 @@ def svm():
     print('Test accuracy: ' + str(clf.score(tX, ty)))
     # ------------
 
-    return clf.score(X_test, y_test)
+    print("SVM  Accuracy: " + str(clf.score(X_test, y_test)))
+
+def svm_best_train():
+    svc = SVC(kernel='rbf', C=6, gamma=0.5, random_state=1)
+    svc.fit(X_train, y_train)
+    return svc.score(X_test, y_test)
 
 def dt():
     clf = DecisionTreeClassifier(random_state=0)
     clf.fit(X_train, y_train)
     return clf.score(X_test, y_test)
 
+
+def main():
+    svm_best_train_score = svm_best_train()
+
+    print(f'''
+BEST MODEL:
+(insert hyperparams)
+Training Accuracy:
+
+Test Accuracy:
+
+------------------------------------
+Other models:
+
+[Logistic Regression]
+          
+Hyperparams:
+Training Accuracy:
+
+Test Accuracy:
+          
+
+[SVM]
+          
+Hyperparams: C=6, gamma=0.5, kernel=rbf
+Training Accuracy: {svm_best_train_score}
+
+Test Accuracy:
+
+
+[Decision Tree]
+
+Hyperparams:
+Training Accuracy:
+
+Test Accuracy:
+''')
+
 print("Logistic Regression Accuracy: " + str(lr()))
-print("SVM  Accuracy: " + str(svm()))
 print("Decision Tree Accuracy: " + str(dt()))
+
+main()
