@@ -36,17 +36,26 @@ data = data.to_numpy()
 X = data[:,0:-1]
 y = data[:,-1]
 
-# standardize
+# standardize the training dataset
 x_scaler = preprocessing.StandardScaler().fit(X)
 X = x_scaler.transform(X)
 
+# split the training dataset into training and testing folds
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# parse in test.csv and standardize the data
+test_path = './Data/test.csv'
+test_data = pd.read_csv(test_path).to_numpy()
+test_X = test_data[:,0:-1]
+test_y = test_data[:,-1]
+test_x_scaler = preprocessing.StandardScaler().fit(test_X)
+test_X = test_x_scaler.transform(test_X)
 
 def lr():
     clf = LogisticRegression(random_state=0).fit(X_train, y_train)
     return clf.score(X_test, y_test)
 
-def svm():
+def svm_tune():
 
     # REMOVE
     tpath = './DELETE/test_mod.csv'
@@ -61,6 +70,8 @@ def svm():
     gamma_params = ['auto', 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     hyperparams = {'C':C_params, 'gamma':gamma_params}
     svc = SVC(kernel='rbf', random_state=1)
+
+    # fit the model using k-fold cv and grid search for hyperparam tuning
     clf = GridSearchCV(svc, hyperparams, cv=10, n_jobs=-1)
     clf.fit(X_train, y_train)
     print(clf.best_estimator_)
@@ -69,7 +80,21 @@ def svm():
     print('Test accuracy: ' + str(clf.score(tX, ty)))
     # ------------
 
-    return clf.score(X_test, y_test)
+    print("SVM Train Accuracy: " + str(clf.score(X_test, y_test)))
+
+def svm_best_train():
+    svc = SVC(kernel='rbf', C=6, gamma=0.5, random_state=1)
+    svc.fit(X_train, y_train)
+    return svc.score(X_test, y_test)
+
+def svm_test():
+    svc = SVC(kernel='rbf', C=6, gamma=0.5, random_state=1)
+
+    # train the SVM on the training data from train.csv
+    svc.fit(X_train, y_train)
+
+    # output the accuracy score from predicting the testing data from test.csv
+    return svc.score(test_X, test_y)
 
 def dt():
     tree = DecisionTreeClassifier(random_state=0)
@@ -85,7 +110,45 @@ def dt():
     print(search.best_params_)
 
 
+
+def main():
+    svm_best_train_score = svm_best_train()
+    svm_test_score = svm_test()
+
+    print(f'''
+BEST MODEL:
+(insert hyperparams)
+Training Accuracy:
+
+Test Accuracy:
+
+------------------------------------
+Other models:
+
+[Logistic Regression]
+          
+Hyperparams:
+Training Accuracy:
+
+Test Accuracy:
+          
+
+[SVM]
+          
+Hyperparams: C=6, gamma=0.5, kernel=rbf
+Training Accuracy: {svm_best_train_score}
+
+Test Accuracy: {svm_test_score}
+
+
+[Decision Tree]
+
+Hyperparams:
+Training Accuracy:
+
+Test Accuracy:
+''')
+
 print("Logistic Regression Accuracy: " + str(lr()))
-#print("SVM  Accuracy: " + str(svm()))
 #print("Decision Tree Accuracy: " + str(dt()))
-dt()
+main()
