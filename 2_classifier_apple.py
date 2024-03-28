@@ -46,7 +46,7 @@ def lr():
 def svm():
 
     # REMOVE
-    tpath = 'test_mod.csv'
+    tpath = './DELETE/test_mod.csv'
     tdata = pd.read_csv(tpath).to_numpy()
     tX = tdata[:,0:-1]
     ty = tdata[:,-1]
