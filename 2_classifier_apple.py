@@ -1,12 +1,15 @@
 import pandas as pd
+from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import KFold
+
 
 path = './Data/train.csv'
 data = pd.read_csv(path)
@@ -69,10 +72,20 @@ def svm():
     return clf.score(X_test, y_test)
 
 def dt():
-    clf = DecisionTreeClassifier(random_state=0)
-    clf.fit(X_train, y_train)
-    return clf.score(X_test, y_test)
+    tree = DecisionTreeClassifier(random_state=0)
+    pca = PCA()
+    pipe = Pipeline(steps=[("pca", pca), ("tree", tree)])
+    param_grid = {
+        "pca__n_components": range(1,8),
+        "tree__min_samples_split": range(2,50)
+    }
+    search = GridSearchCV(pipe, param_grid, cv=10, n_jobs=-1)
+    search.fit(X,y)
+    print("Best parameter (CV score=%0.3f):" % search.best_score_)
+    print(search.best_params_)
+
 
 print("Logistic Regression Accuracy: " + str(lr()))
-print("SVM  Accuracy: " + str(svm()))
-print("Decision Tree Accuracy: " + str(dt()))
+#print("SVM  Accuracy: " + str(svm()))
+#print("Decision Tree Accuracy: " + str(dt()))
+dt()
