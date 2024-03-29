@@ -164,13 +164,31 @@ def dt():
     search = GridSearchCV(pipe, param_grid, cv=10, n_jobs=-1)
     search.fit(X_train, y_train)
     clf = search.best_estimator_    
+    print(clf)
     
     # Test accuracy - remove
     print("Test accuracy " + str(search.score(tX, ty)))
 
     return clf.score(X_test, y_test)
 
+def dt_best_train():
+    pca = PCA(n_components=7)
+    X_train = pca.fit_transform(X_train)
 
+    dt = DecisionTreeClassifier(random_state = 0)
+    dt.fit(X_train, y_train)
+    return dt.score(X_test, y_test)
+
+def dt_test():
+    #Preprocessing with PCA (keeping all features was optimal) 
+    pca = PCA(n_components=7)
+    X_train = pca.fit_transform(X_train)
+
+    dt = DecisionTreeClassifier(random_state = 0)
+    dt.fit(X_train, y_train)
+
+    # output the accuracy score from predicting the testing data from test.csv
+    return dt.score(test_X, test_y)
 
 def main():
     svm_best_train_score = svm_best_train()
