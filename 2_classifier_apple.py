@@ -66,18 +66,28 @@ def svm_tune():
     tX = tx_scaler.transform(tX)
     # -------------------------------
 
-    C_params = [i for i in range(1, 50)]
-    gamma_params = ['auto', 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    hyperparams = {'C':C_params, 'gamma':gamma_params}
     svc = SVC(kernel='rbf', random_state=1)
+    pca = PCA()
+    pipe = Pipeline(steps=[("pca", pca), ("svc", svc)])
+
+    pca__n_components = range(4, 8)
+    svc__C_params = [i for i in range(1, 50)]
+    svc__gamma_params = ['auto', 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+    # pca didn't do anything
+    params = {
+        'pca__n_components': pca__n_components,
+        'svc__C': svc__C_params, 
+        'svc__gamma': svc__gamma_params
+     }
 
     # fit the model using k-fold cv and grid search for hyperparam tuning
-    clf = GridSearchCV(svc, hyperparams, cv=10, n_jobs=-1)
+    clf = GridSearchCV(pipe, params, cv=10, n_jobs=-1)
     clf.fit(X_train, y_train)
     print(clf.best_estimator_)
 
     # REMOVE
-    print('Test accuracy: ' + str(clf.score(tX, ty)))
+  #  print('Test accuracy: ' + str(clf.score(tX, ty)))
     # ------------
 
     print("SVM Train Accuracy: " + str(clf.score(X_test, y_test)))
@@ -151,4 +161,5 @@ Test Accuracy:
 
 print("Logistic Regression Accuracy: " + str(lr()))
 #print("Decision Tree Accuracy: " + str(dt()))
+
 main()
