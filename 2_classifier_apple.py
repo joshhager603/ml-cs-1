@@ -91,7 +91,7 @@ def lr_test():
     lr.fit(X_train, y_train)
     return lr.score(test_X, test_y)
 
-def svm():
+def svm_tune():
 
     # REMOVE
     tpath = './DELETE/test_mod.csv'
@@ -102,11 +102,23 @@ def svm():
     tX = tx_scaler.transform(tX)
     # -------------------------------
 
-    C_params = [i for i in range(1, 50)]
-    gamma_params = ['auto', 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    hyperparams = {'C':C_params, 'gamma':gamma_params}
     svc = SVC(kernel='rbf', random_state=1)
-    clf = GridSearchCV(svc, hyperparams, cv=10, n_jobs=-1)
+    pca = PCA()
+    pipe = Pipeline(steps=[("pca", pca), ("svc", svc)])
+
+    pca__n_components = range(4, 8)
+    svc__C_params = [i for i in range(1, 50)]
+    svc__gamma_params = ['auto', 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+    # pca didn't do anything
+    params = {
+        'pca__n_components': pca__n_components,
+        'svc__C': svc__C_params, 
+        'svc__gamma': svc__gamma_params
+     }
+
+    # fit the model using k-fold cv and grid search for hyperparam tuning
+    clf = GridSearchCV(pipe, params, cv=10, n_jobs=-1)
     clf.fit(X_train, y_train)
     print(clf.best_estimator_)
 
@@ -114,7 +126,21 @@ def svm():
     print('Test accuracy: ' + str(clf.score(tX, ty)))
     # ------------
 
-    return clf.score(X_test, y_test)
+    print("SVM Train Accuracy: " + str(clf.score(X_test, y_test)))
+
+def svm_best_train():
+    svc = SVC(kernel='rbf', C=6, gamma=0.5, random_state=1)
+    svc.fit(X_train, y_train)
+    return svc.score(X_test, y_test)
+
+def svm_test():
+    svc = SVC(kernel='rbf', C=6, gamma=0.5, random_state=1)
+
+    # train the SVM on the training data from train.csv
+    svc.fit(X_train, y_train)
+
+    # output the accuracy score from predicting the testing data from test.csv
+    return svc.score(test_X, test_y)
 
 def dt():
     clf = DecisionTreeClassifier(random_state=0)
@@ -124,3 +150,49 @@ def dt():
 print("Logistic Regression Accuracy: " + str(lr()))
 #print("SVM  Accuracy: " + str(svm()))
 #print("Decision Tree Accuracy: " + str(dt()))
+
+def main():
+    lr_best_train_score = lr_best_train()
+    lr_test_score = lr_test()
+
+    svm_best_train_score = svm_best_train()
+    svm_test_score = svm_test()
+
+    print(f'''
+BEST MODEL:
+(insert hyperparams)
+Training Accuracy:
+
+Test Accuracy:
+
+------------------------------------
+Other models:
+
+[Logistic Regression]
+          
+Hyperparams: C = 0.2, random_state = 0, solver = 'saga'
+Training Accuracy: {lr_best_train_score}
+
+Test Accuracy: {lr_test_score}
+          
+
+[SVM]
+          
+Hyperparams: C=6, gamma=0.5, kernel=rbf
+Training Accuracy: {svm_best_train_score}
+
+Test Accuracy: {svm_test_score}
+
+
+[Decision Tree]
+
+Hyperparams:
+Training Accuracy:
+
+Test Accuracy:
+''')
+
+print("Logistic Regression Accuracy: " + str(lr()))
+#print("Decision Tree Accuracy: " + str(dt()))
+
+main()
