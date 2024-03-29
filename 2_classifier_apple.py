@@ -69,7 +69,7 @@ def lr():
     pca = PCA()
     lr = LogisticRegression(random_state=0)
     pipe = Pipeline(steps=[("pca", pca), ("lr", lr)])
-    lr__C_params = np.arange(0,10,0.1)
+    lr__C_params = np.arange(0.1,10,0.1)
     lr__penalties = [None, 'l1', 'l2']
     lr__solver = ['saga']
     params = {'pca__n_components': np.arange(4,8), 
@@ -190,5 +190,5 @@ Test Accuracy:
 ''')
 
 print("Logistic Regression Accuracy: " + str(lr()))
-#print("Decision Tree Accuracy: " + str(dt()))
+print("Decision Tree Accuracy: " + str(dt()))
 main()
