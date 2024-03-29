@@ -108,7 +108,6 @@ def dt():
 
     tree = DecisionTreeClassifier(random_state=0)
     pca = PCA()
-    lda = LDA()
     pipe = Pipeline(steps=[("pca", pca), ("tree", tree)])
     param_grid = {
         "pca__n_components": range(2,8),
