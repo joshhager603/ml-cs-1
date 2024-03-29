@@ -87,7 +87,7 @@ def svm_tune():
     print(clf.best_estimator_)
 
     # REMOVE
-  #  print('Test accuracy: ' + str(clf.score(tX, ty)))
+    print('Test accuracy: ' + str(clf.score(tX, ty)))
     # ------------
 
     print("SVM Train Accuracy: " + str(clf.score(X_test, y_test)))
