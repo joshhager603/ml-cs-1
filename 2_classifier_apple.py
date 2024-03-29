@@ -9,7 +9,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
-
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 path = './Data/train.csv'
 data = pd.read_csv(path)
@@ -97,17 +97,30 @@ def svm_test():
     return svc.score(test_X, test_y)
 
 def dt():
+    # REMOVE
+    tpath = './DELETE/test_mod.csv'
+    tdata = pd.read_csv(tpath).to_numpy()
+    tX = tdata[:,0:-1]
+    ty = tdata[:,-1]
+    tx_scaler = preprocessing.StandardScaler().fit(tX)
+    tX = tx_scaler.transform(tX)
+    # -------------------------------
+
     tree = DecisionTreeClassifier(random_state=0)
     pca = PCA()
+    lda = LDA()
     pipe = Pipeline(steps=[("pca", pca), ("tree", tree)])
     param_grid = {
-        "pca__n_components": range(1,8),
-        "tree__min_samples_split": range(2,50)
+        "pca__n_components": range(2,8),
     }
     search = GridSearchCV(pipe, param_grid, cv=10, n_jobs=-1)
-    search.fit(X,y)
-    print("Best parameter (CV score=%0.3f):" % search.best_score_)
-    print(search.best_params_)
+    search.fit(X_train, y_train)
+    clf = search.best_estimator_    
+    
+    # Test accuracy - remove
+    print("Test accuracy " + str(search.score(tX, ty)))
+
+    return clf.score(X_test, y_test)
 
 
 
@@ -150,5 +163,5 @@ Test Accuracy:
 ''')
 
 print("Logistic Regression Accuracy: " + str(lr()))
-#print("Decision Tree Accuracy: " + str(dt()))
-main()
+print("Decision Tree Accuracy: " + str(dt()))
+#main()
