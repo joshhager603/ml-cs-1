@@ -9,7 +9,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import KFold
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 path = './Data/train.csv'
@@ -87,7 +86,7 @@ def lr():
 
 def lr_best_train():
     lr = LogisticRegression(C =0.2,random_state=0,solver='saga')
-    lr.fit(X_train, y_test)
+    lr.fit(X_train, y_train)
     return lr.score(X_test, y_test)
 
 def lr_test():
@@ -177,24 +176,11 @@ def main():
     svm_best_train_score = svm_best_train()
     svm_test_score = svm_test()
 
+    lr_best_train_score = lr_best_train()
+    lr_test_score = lr_test()
+
     print(f'''
 BEST MODEL:
-(insert hyperparams)
-Training Accuracy:
-
-Test Accuracy:
-
-------------------------------------
-Other models:
-
-[Logistic Regression]
-          
-Hyperparams:
-Training Accuracy:
-
-Test Accuracy:
-          
-
 [SVM]
           
 Hyperparams: C=6, gamma=0.5, kernel=rbf
@@ -202,6 +188,15 @@ Training Accuracy: {svm_best_train_score}
 
 Test Accuracy: {svm_test_score}
 
+------------------------------------
+Other models:
+
+[Logistic Regression]
+          
+Hyperparams: C=0.2, solver=saga
+Training Accuracy: {lr_best_train_score}
+
+Test Accuracy: {lr_test_score}
 
 [Decision Tree]
 
@@ -210,7 +205,5 @@ Training Accuracy:
 
 Test Accuracy:
 ''')
-
-print("Logistic Regression Accuracy: " + str(lr()))
-print("Decision Tree Accuracy: " + str(dt()))
+    
 main()
