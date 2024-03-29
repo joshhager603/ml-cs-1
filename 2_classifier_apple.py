@@ -7,7 +7,6 @@ from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import preprocessing
-from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
@@ -173,19 +172,19 @@ def dt():
 
 def dt_best_train():
     pca = PCA(n_components=7)
-    X_train = pca.fit_transform(X_train)
+    X_train_transformed = pca.fit_transform(X_train)
 
     dt = DecisionTreeClassifier(random_state = 0)
-    dt.fit(X_train, y_train)
+    dt.fit(X_train_transformed, y_train)
     return dt.score(X_test, y_test)
 
 def dt_test():
     #Preprocessing with PCA (keeping all features was optimal) 
     pca = PCA(n_components=7)
-    X_train = pca.fit_transform(X_train)
+    X_train_transformed = pca.fit_transform(X_train)
 
     dt = DecisionTreeClassifier(random_state = 0)
-    dt.fit(X_train, y_train)
+    dt.fit(X_train_transformed, y_train)
 
     # output the accuracy score from predicting the testing data from test.csv
     return dt.score(test_X, test_y)
@@ -196,6 +195,9 @@ def main():
 
     lr_best_train_score = lr_best_train()
     lr_test_score = lr_test()
+    
+    dt_best_train_score = dt_best_train()
+    dt_test_score = dt_test()
 
     print(f'''
 BEST MODEL:
@@ -218,10 +220,10 @@ Test Accuracy: {lr_test_score}
 
 [Decision Tree]
 
-Hyperparams:
-Training Accuracy:
+Hyperparams: PCA__n_components=7
+Training Accuracy: {dt_best_train_score}
 
-Test Accuracy:
+Test Accuracy: {dt_test_score}
 ''')
     
 main()
