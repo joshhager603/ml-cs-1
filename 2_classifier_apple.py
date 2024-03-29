@@ -171,22 +171,15 @@ def dt():
     return clf.score(X_test, y_test)
 
 def dt_best_train():
-    pca = PCA(n_components=7)
-    X_train_transformed = pca.fit_transform(X_train)
-
-    dt = DecisionTreeClassifier(random_state = 0)
-    dt.fit(X_train_transformed, y_train)
+    dt = Pipeline(steps=[('pca', PCA(n_components=7)),
+                ('tree', DecisionTreeClassifier(random_state=0))])
+    dt.fit(X_train, y_train)
     return dt.score(X_test, y_test)
 
 def dt_test():
-    #Preprocessing with PCA (keeping all features was optimal) 
-    pca = PCA(n_components=7)
-    X_train_transformed = pca.fit_transform(X_train)
-
-    dt = DecisionTreeClassifier(random_state = 0)
-    dt.fit(X_train_transformed, y_train)
-
-    # output the accuracy score from predicting the testing data from test.csv
+    dt = Pipeline(steps=[('pca', PCA(n_components=7)),
+                ('tree', DecisionTreeClassifier(random_state=0))])
+    dt.fit(X_train, y_train)
     return dt.score(test_X, test_y)
 
 def main():
