@@ -15,6 +15,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 -- README --
 CSDS 340
 Case Study 1 Python Code
+Group 2
 Sam King (sjk171), Calvin Cai (cyc44), Josh Hager (jrh236)
 
 Before running the code, please ensure the files ./Data/train.csv and ./Data/test.csv exist and 
