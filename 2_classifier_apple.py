@@ -169,9 +169,9 @@ BEST MODEL:
 [SVM]
           
 Hyperparams: C=6, gamma=0.5, kernel=rbf
-Training Accuracy: {svm_best_train_score}
+Training Accuracy: {round(svm_best_train_score * 100, 2)}%
 
-Test Accuracy: {svm_test_score}
+Test Accuracy: {round(svm_test_score * 100, 2)} %
 
 ------------------------------------
 Other models:
@@ -179,16 +179,16 @@ Other models:
 [Logistic Regression]
           
 Hyperparams: C=0.2, solver=saga
-Training Accuracy: {lr_best_train_score}
+Training Accuracy: {round(lr_best_train_score * 100, 2)}%
 
-Test Accuracy: {lr_test_score}
+Test Accuracy: {round(lr_test_score * 100, 2)}%
 
 [Decision Tree]
 
 Hyperparams: PCA__n_components=7
-Training Accuracy: {dt_best_train_score}
+Training Accuracy: {round(dt_best_train_score * 100, 2)}%
 
-Test Accuracy: {dt_test_score}
+Test Accuracy: {round(dt_test_score * 100, 2)}%
 ''')
     
 main()
