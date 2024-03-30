@@ -10,21 +10,23 @@ from sklearn import preprocessing
 from sklearn.model_selection import GridSearchCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
+'''
+======================================================================================================
+-- README --
+CSDS 340
+Case Study 1 Python Code
+Sam King (sjk171), Calvin Cai (cyc44), Josh Hager (jrh236)
+
+Before running the code, please ensure the files ./Data/train.csv and ./Data/test.csv exist and 
+are in the proper directory.
+
+The code can be run using the command:
+python3 2_classifier_apple.py
+======================================================================================================
+'''
+
 path = './Data/train.csv'
 data = pd.read_csv(path)
-
-'''
-- check for missing data
-- standardize the data
-- try L1 and L2 reg
-- forward and backward feature selection
-- PCA and LDA (change value of k)
-- k fold cross validation
-- hyperparameter tuning
-
-Want >75% accuracy on test set
-Maybe shoot for >85% or >90% on validation set?
-'''
 
 # check for missing data 
 for row in data.isnull().to_numpy():
@@ -50,23 +52,11 @@ test_y = test_data[:,-1]
 test_x_scaler = preprocessing.StandardScaler().fit(test_X)
 test_X = test_x_scaler.transform(test_X)
 
-'''
-Done: Hyperparameter tuning, L1, L2, none regularizers.
-To do: Forward and backward feature selection, PCA and LDA (needed?), k-fold cross validation(I think it does this alr?)
-'''
 def lr():
-
-    # REMOVE
-    tpath = './DELETE/test_mod.csv'
-    tdata = pd.read_csv(tpath).to_numpy()
-    tX = tdata[:,0:-1]
-    ty = tdata[:,-1]
-    tx_scaler = preprocessing.StandardScaler().fit(tX)
-    tX = tx_scaler.transform(tX)
-    # -------------------------------
     pca = PCA()
     lr = LogisticRegression(random_state=0)
     pipe = Pipeline(steps=[("pca", pca), ("lr", lr)])
+
     lr__C_params = np.arange(0.1,10,0.1)
     lr__penalties = [None, 'l1', 'l2']
     lr__solver = ['saga']
@@ -74,13 +64,11 @@ def lr():
               'lr__C':lr__C_params, 
               'lr__penalty': lr__penalties, 
               'lr__solver': lr__solver}  
+    
     clf = GridSearchCV(pipe, params, cv=10, n_jobs=-1)
     clf.fit(X_train, y_train)
     print(clf.best_estimator_)
 
-    # REMOVE
-    print('Test accuracy: ' + str(clf.score(tX, ty)))
-    # ------------
     return clf.score(X_train, y_train)
 
 def lr_best_train():
@@ -94,15 +82,6 @@ def lr_test():
     return lr.score(test_X, test_y)
 
 def svm_tune():
-
-    # REMOVE
-    tpath = './DELETE/test_mod.csv'
-    tdata = pd.read_csv(tpath).to_numpy()
-    tX = tdata[:,0:-1]
-    ty = tdata[:,-1]
-    tx_scaler = preprocessing.StandardScaler().fit(tX)
-    tX = tx_scaler.transform(tX)
-    # -------------------------------
 
     svc = SVC(kernel='rbf', random_state=1)
     pca = PCA()
@@ -124,10 +103,6 @@ def svm_tune():
     clf.fit(X_train, y_train)
     print(clf.best_estimator_)
 
-    # REMOVE
-    print('Test accuracy: ' + str(clf.score(tX, ty)))
-    # ------------
-
     print("SVM Train Accuracy: " + str(clf.score(X_test, y_test)))
 
 def svm_best_train():
@@ -145,15 +120,6 @@ def svm_test():
     return svc.score(test_X, test_y)
 
 def dt():
-    # REMOVE
-    tpath = './DELETE/test_mod.csv'
-    tdata = pd.read_csv(tpath).to_numpy()
-    tX = tdata[:,0:-1]
-    ty = tdata[:,-1]
-    tx_scaler = preprocessing.StandardScaler().fit(tX)
-    tX = tx_scaler.transform(tX)
-    # -------------------------------
-
     tree = DecisionTreeClassifier(random_state=0)
     pca = PCA()
     pipe = Pipeline(steps=[("pca", pca), ("tree", tree)])
@@ -164,9 +130,6 @@ def dt():
     search.fit(X_train, y_train)
     clf = search.best_estimator_    
     print(clf)
-    
-    # Test accuracy - remove
-    print("Test accuracy " + str(search.score(tX, ty)))
 
     return clf.score(X_test, y_test)
 
