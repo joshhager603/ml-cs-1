@@ -79,7 +79,11 @@ def lr_best_train():
 
 def lr_test():
     lr = LogisticRegression(C=0.2,random_state=0,solver='saga')
+
+    # train on the training data from train.csv
     lr.fit(X_train, y_train)
+
+    # output the accuracy score from predicting the testing data from test.csv
     return lr.score(test_X, test_y)
 
 def svm_tune():
@@ -143,7 +147,11 @@ def dt_best_train():
 def dt_test():
     dt = Pipeline(steps=[('pca', PCA(n_components=7)),
                 ('tree', DecisionTreeClassifier(random_state=0))])
+    
+    # train on the training data from train.csv
     dt.fit(X_train, y_train)
+
+    # output the accuracy score from predicting the testing data from test.csv
     return dt.score(test_X, test_y)
 
 def main():
